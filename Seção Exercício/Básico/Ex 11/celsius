@@ -1,0 +1,8 @@
+// celcius-fahrenheit formula: c/5 = (f-32)/9
+const c = 60;
+const f = 45;
+
+const celsiusToF = (f-32)*5/9;
+const fahrenheitToC = c*9/5 + 32;
+
+console.log(fahrenheitToC, celsiusToF);
