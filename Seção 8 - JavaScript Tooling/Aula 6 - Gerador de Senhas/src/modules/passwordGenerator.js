@@ -12,10 +12,10 @@ export default class Password {
         return make;
     }
     randomizePassword(max) {
-        if (max <= 0) return false;
         let password = '';
         let passwordLength = password.length;
         for (let i = 0; i <= max; i++) {
+            // Could use a math.random() and charCodes. <<<<<
             if (this.upperCase && passwordLength < max) {
                 password = this.makePassword(password, 'upperCase');
                 passwordLength++;
