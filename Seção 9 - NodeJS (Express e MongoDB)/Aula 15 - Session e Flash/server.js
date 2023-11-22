@@ -34,6 +34,8 @@ const sessionOptions = session({
     },
 });
 
+const { middleWareGlobal } = require('./src/middlewares/MDW');
+
 app.use(sessionOptions);
 app.use(flash());
 
@@ -41,6 +43,7 @@ app.set('views', path.resolve(__dirname, 'src', 'views'));
 app.set('view engine', 'ejs');
 
 // Our own middlewares
+app.use(middleWareGlobal);
 app.use(routes);
 
 app.on('DONE', () => {

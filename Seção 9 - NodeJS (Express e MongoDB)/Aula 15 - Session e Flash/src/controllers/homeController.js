@@ -1,6 +1,7 @@
 exports.initial = (req, res) => {
-    console.log(req.flash('error'), req.flash('info'), req.flash('success'));
-    res.render('index');
+    res.render('index', {
+        title: 'EJS Initial Title',
+    });
     return;
 }; 
 
