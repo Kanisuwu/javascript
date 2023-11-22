@@ -17,10 +17,11 @@ const routes = require('./routes')
 const path = require('path');
 const helmet = require('helmet');
 const csrf = require('csurf');
-const { middleWareGlobal, checkCsrfError, csrfMiddleware } = require('./src/middlewares/MDW');
+const { checkCsrfError, csrfMiddleware } = require('./src/middlewares/MDW');
 
-
-//app.use(helmet());
+// DO NOT USE ON LOCALHOST
+app.use(helmet());
+// Autoriza a postagem de formulários na aplicação
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.resolve(__dirname, 'public')));
 

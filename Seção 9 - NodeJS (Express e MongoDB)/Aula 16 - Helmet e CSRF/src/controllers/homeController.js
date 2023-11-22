@@ -7,5 +7,4 @@ exports.initial = (req, res) => {
 
 exports.handle = (req, res) => {
     res.send(`New ${req.body._csrf}`);
-    return;
 };
