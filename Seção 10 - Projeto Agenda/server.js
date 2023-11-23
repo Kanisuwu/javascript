@@ -13,7 +13,7 @@ mongoose.connect(process.env.CONNECTION_STRING)
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
-const routes = require('./routes')
+const routes = require('./routes');
 const path = require('path');
 const helmet = require('helmet');
 const csrf = require('csurf');
@@ -28,7 +28,7 @@ app.use(express.static(path.resolve(__dirname, 'public')));
 const sessionOptions = session({
     secret: 'OwO?',
     store: MongoStore.create({
-        mongoUrl: process.env.CONNECTION_STRING
+        mongoUrl: process.env.CONNECTION_STRING,
     }),
     resave: false,
     saveUninitialized: false,
@@ -55,6 +55,6 @@ app.use(routes);
 app.on('DONE', () => {
     app.listen(3000, () => {
         console.log('Acessar o http://localhost:3000');
-        console.log('Servidor sendo executado na porta: 3000.')
+        console.log('Servidor sendo executado na porta: 3000.');
     });
-})
+});
