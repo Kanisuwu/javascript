@@ -17,7 +17,7 @@ const routes = require('./routes')
 const path = require('path');
 const helmet = require('helmet');
 const csrf = require('csurf');
-const { checkCsrfError, csrfMiddleware } = require('./src/middlewares/MDW');
+const { globals, checkCsrfError, csrfMiddleware } = require('./src/middlewares/MDW');
 
 // DO NOT USE ON LOCALHOST
 app.use(helmet());
@@ -47,6 +47,7 @@ app.set('view engine', 'ejs');
 
 // Our own middlewares
 app.use(csrf());
+app.use(globals);
 app.use(checkCsrfError);
 app.use(csrfMiddleware);
 app.use(routes);
