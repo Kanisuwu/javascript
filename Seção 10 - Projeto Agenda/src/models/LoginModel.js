@@ -28,12 +28,8 @@ class Login {
         const salt = bcrypt.genSaltSync();
         this.body.password = bcrypt.hashSync(this.body.password, salt);
 
-        try {
-            this.user = await LoginModel.create(this.body);
-        }
-        catch(e) {
-            console.log(e)
-        }
+        this.user = await LoginModel.create(this.body);
+        console.log(e)
     }
 
     async userExist() {
