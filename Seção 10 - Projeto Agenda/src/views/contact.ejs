@@ -15,8 +15,12 @@
 
       <div class="col-lg">
         <h4>Register</h4>
-        <form action="/contact/register" method="post">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <% if (contact._id) { %>
+          <form action="/contact/edit/<%= contact._id %>" method="post">
+        <% } else { %>
+          <form action="/contact/register" method="post">
+        <% } %>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="form-group">
             <label for="exampleInputEmail1">Name</label>
             <input value="<%= contact.name %>" type="text" class="form-control" aria-describedby="emailHelp" name="name">
