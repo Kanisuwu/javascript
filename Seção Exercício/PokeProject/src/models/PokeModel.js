@@ -37,7 +37,7 @@ export default class Pokemon {
     // Send pokemon information to the DB.
     async gatherPokemon() {
         if (this.errors.length > 0) return;
-        const pokemon = this.searchPokemon();
+        const pokemon = await this.searchPokemon();
         if (!pokemon) return;
         const pokeData = {
             name: pokemon.name,
