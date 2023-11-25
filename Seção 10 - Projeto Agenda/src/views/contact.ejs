@@ -1,0 +1,52 @@
+<%- include('./includes/head') %>
+<%- include('./includes/nav') %>
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-2"></div>
+
+    <div class="col-lg-8 my-3">
+      <h1 class="display-1 text-center">Contacts</h1>
+      <p class="text-center lead">Make or edit your contacts.</p>
+
+      <%- include('includes/messages') %>
+
+      <div class="col-lg">
+        <h4>Register</h4>
+        <% if (contact._id) { %>
+          <form class="contact-form" action="/contact/edit/<%= contact._id %>" method="post">
+        <% } else { %>
+          <form class="contact-form" action="/contact/register" method="post">
+        <% } %>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group" id="name">
+            <label for="exampleInputEmail1">Name</label>
+            <input value="<%= contact.name %>" type="text" class="form-control" aria-describedby="emailHelp" name="name">
+          </div>
+          <div class="form-group" id="lastname">
+            <label for="exampleInputEmail1">Lastname</label>
+            <input value="<%= contact.lastname %>" type="text" class="form-control" aria-describedby="emailHelp" name="lastname">
+          </div>
+          <div class="form-group" id="email">
+            <label for="exampleInputPassword1">Email</label>
+            <input value="<%= contact.email %>" type="email" class="form-control" name="email">
+          </div>
+          <div class="form-group" id="phoneNumber">
+            <label for="exampleInputPassword1">Phone Number</label>
+            <input value="<%= contact.phoneNumber %>" type="tel" class="form-control" name="phoneNumber">
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="col-lg-2"></div>
+  </div>
+</div>
+
+
+
+<%- include('./includes/footer') %>

@@ -8,10 +8,15 @@
       <ul class="navbar-nav ml-auto">
 
         <li class="nav-item">
-          <a class="nav-link" href="/login/index">Log In</a>
-          
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <a class="nav-link" href="/contact/index">Register Contact</a>
+
+        <% if (!user) { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/login/index">Log In</a>
+        <% } else { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/login/logout">Log Out</a>
+        <% } %>
 
         </li>
       </ul>

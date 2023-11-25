@@ -11,17 +11,26 @@
       <h1 class="display-1 text-center">Agenda</h1>
       <p class="text-center lead">Seus contatos estão abaixo:</p>
 
+      <%- include('includes/messages') %>
+
+      <% if (contacts.length > 0) { %>
       <div class="responsive-table">
         <table class="table">
-          <tr>
-            <td>Kanisu</td>
-            <td>Slugish</td>
-            <td>2383823932</td>
-            <td>email@email.com</td>
-          </tr>
+          <% contacts.forEach(contact => { %>
+            <tr>
+              <td><%= contact.name %></td>
+              <td><%= contact.lastname %></td>
+              <td><%= contact.phoneNumber %></td>
+              <td><%= contact.email %></td>
+              <td><a href="/contact/index/<%= contact._id %>">Edit</a></td>
+              <td><a href="/contact/delete/<%= contact._id %>" class="text-danger">Delete</a></td>
+            </tr>
+          <% }); %>
         </table>
       </div>
-
+      <% } else { %>
+        <p class="text-center lead">There is no contacts here.</p>
+      <% } %>
     </div>
 
     <div class="col-lg-2"></div>
