@@ -1,7 +1,11 @@
 // CommonJS
-const path = require('path');
+import { fileURLToPath as toURL } from 'url';
+import path from 'path';
 
-module.exports = {
+const __filename = toURL(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
     mode: 'development',
     entry: './frontend/main.js',
     output: {
@@ -19,6 +23,7 @@ module.exports = {
                 },
             },
         }, {
+            exclude: /node_modules/,
             test: /\.css$/,
             use: ['style-loader', 'css-loader'],
         },
