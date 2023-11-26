@@ -23,7 +23,7 @@ export default class Pokemon {
     async searchPokemon() {
         if (!this.body.name) return;
         try {
-            const pokemonName = Pokemon.searchCleanUp(this.body.name);
+            const pokemonName = Pokemon.stringCleanUp(this.body.name);
             const pokemon = await P.getPokemonByName(pokemonName);
             if (!pokemon) {
                 this.errors.push('Pokemon does not exist.');
@@ -35,7 +35,7 @@ export default class Pokemon {
             console.log(e);
         }
     }
-    // Send pokemon information to the DB.
+    // Gather data about the pokemon.
     async gatherData() {
         try {
             if (this.errors.length > 0) return;
@@ -65,7 +65,7 @@ export default class Pokemon {
             console.log('ERR >>> ' + e);
         }
     }
-    static searchCleanUp(name) {
+    static stringCleanUp(name) {
         const lowerCaseName = name.toLowerCase();
         const cleanName = lowerCaseName.trim();
         return cleanName;
