@@ -1,16 +1,16 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import Pokedex from "pokedex-promise-v2";
 
 const P = new Pokedex();
 
-const PokemonSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    types: { type: Array, required: true },
-    sprite: { type: String, required: true },
-    stats: { type: Array, required: false, default: [] },
-});
+// const PokemonSchema = new mongoose.Schema({
+//     name: { type: String, required: true },
+//     types: { type: Array, required: true },
+//     sprite: { type: String, required: true },
+//     stats: { type: Array, required: false, default: [] },
+// });
 
-const PokeModel = mongoose.model('Pokemon', PokemonSchema);
+// const PokeModel = mongoose.model('Pokemon', PokemonSchema);
 
 export default class Pokemon {
     constructor(body) {
