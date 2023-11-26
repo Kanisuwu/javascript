@@ -23,7 +23,7 @@ export default class Pokemon {
     async searchPokemon() {
         if (!this.body.name) return;
         try {
-            const pokemonName = Pokemon.searchCleanUp(this.body.name);
+            const pokemonName = Pokemon.stringCleanUp(this.body.name);
             const pokemon = await P.getPokemonByName(pokemonName);
             if (!pokemon) {
                 this.errors.push('Pokemon does not exist.');
@@ -46,15 +46,15 @@ export default class Pokemon {
             const typesCleaned = [];
 
             pokemon.stats.forEach((obj) => {
-                statsCleaned.push({ base_stat: obj.base_stat, name: Pokemon.beautyString(obj.stat.name) });
+                statsCleaned.push({ base_stat: obj.base_stat, name: Pokemon.capitalize(obj.stat.name) });
             });
 
             pokemon.types.forEach((obj) => {
-                typesCleaned.push(Pokemon.beautyString(obj.type.name));
+                typesCleaned.push(Pokemon.capitalize(obj.type.name));
             });
 
             const pokeData = {
-                name: Pokemon.beautyString(pokemon.name),
+                name: Pokemon.capitalize(pokemon.name),
                 types: typesCleaned,
                 sprite: pokemon.sprites.front_default,
                 stats: statsCleaned,
@@ -65,12 +65,12 @@ export default class Pokemon {
             console.log('ERR >>> ' + e);
         }
     }
-    static searchCleanUp(name) {
+    static stringCleanUp(name) {
         const lowerCaseName = name.toLowerCase();
         const cleanName = lowerCaseName.trim();
         return cleanName;
     }
-    static beautyString(string) {
+    static capitalize(string) {
         const upperCaseLetter = string.charAt(0).toUpperCase();
         const cutWord = string.slice(1);
         string = upperCaseLetter + cutWord;
