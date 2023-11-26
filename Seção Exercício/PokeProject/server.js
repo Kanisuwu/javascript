@@ -48,6 +48,8 @@ app.set('view engine', 'ejs');
 
 app.use(routes);
 
+// Middlewares
+
 app.on('DONE', () => {
     app.listen(3000, () => {
         console.log('http://localhost:3000');

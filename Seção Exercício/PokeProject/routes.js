@@ -9,6 +9,6 @@ const route = express.Router();
 route.get('/', indexController.initial);
 
 // Pokemon Routes
-route.get('/pokemons', pokemonController.initial);
+route.post('/pokemon', pokemonController.search, pokemonController.initial);
 
 export default route;

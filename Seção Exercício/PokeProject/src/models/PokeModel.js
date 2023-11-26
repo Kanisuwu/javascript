@@ -19,11 +19,12 @@ export default class Pokemon {
         this.pokemon = null;
     }
 
+    // Try to contact the pokeAPI and check if was successful.
     async searchPokemon() {
         if (!this.body.name) return;
-        // Try to contact the pokeAPI and check if was successful.
         try {
-            const pokemon = await P.getPokemonByName(this.body.name);
+            const pokemonName = Pokemon.searchCleanUp(this.body.name);
+            const pokemon = await P.getPokemonByName(pokemonName);
             if (!pokemon) {
                 this.errors.push('Pokemon does not exist.');
                 return;
@@ -35,24 +36,44 @@ export default class Pokemon {
         }
     }
     // Send pokemon information to the DB.
-    async gatherPokemon() {
-        if (this.errors.length > 0) return;
-        const pokemon = this.searchPokemon();
-        if (!pokemon) return;
-        const pokeData = {
-            name: pokemon.name,
-            types: pokemon.types.forEach((index => {
-                const array = [];
-                array.push(index.type.name);
-                return array;
-            })),
-            sprite: pokemon.sprites.front_default,
-            stats: pokemon.stats.forEach(index => {
-                const array = [];
-                array.push({ amount: index.base_stat, stat: index.stat });
-                return array;
-            }),
-        };
-        return pokeData;
+    async gatherData() {
+        try {
+            if (this.errors.length > 0) return;
+            const pokemon = await this.searchPokemon();
+            if (!pokemon) return;
+
+            const statsCleaned = [];
+            const typesCleaned = [];
+
+            pokemon.stats.forEach((obj) => {
+                statsCleaned.push({ base_stat: obj.base_stat, name: Pokemon.beautyString(obj.stat.name) });
+            });
+
+            pokemon.types.forEach((obj) => {
+                typesCleaned.push(Pokemon.beautyString(obj.type.name));
+            });
+
+            const pokeData = {
+                name: Pokemon.beautyString(pokemon.name),
+                types: typesCleaned,
+                sprite: pokemon.sprites.front_default,
+                stats: statsCleaned,
+            };
+            return pokeData;
+        }
+        catch (e) {
+            console.log('ERR >>> ' + e);
+        }
+    }
+    static searchCleanUp(name) {
+        const lowerCaseName = name.toLowerCase();
+        const cleanName = lowerCaseName.trim();
+        return cleanName;
+    }
+    static beautyString(string) {
+        const upperCaseLetter = string.charAt(0).toUpperCase();
+        const cutWord = string.slice(1);
+        string = upperCaseLetter + cutWord;
+        return string;
     }
 }
