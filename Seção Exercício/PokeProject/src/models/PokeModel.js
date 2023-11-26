@@ -35,7 +35,7 @@ export default class Pokemon {
             console.log(e);
         }
     }
-    // Send pokemon information to the DB.
+    // Gather data about the pokemon.
     async gatherData() {
         try {
             if (this.errors.length > 0) return;
