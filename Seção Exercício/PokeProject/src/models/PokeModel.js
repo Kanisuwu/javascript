@@ -69,11 +69,10 @@ export default class Pokemon {
                 stats: stats,
                 evolutionChain: evolutionChain,
             };
-            console.log(pokeData.evolutionChain);
             this.info = pokeData;
         }
         catch (e) {
-            console.error('Could not gather data.');
+            console.error('Could not gather data: ', e);
             this.errors.push('Pokemon cannot be gathered.');
         }
     }
@@ -130,7 +129,7 @@ export default class Pokemon {
     async gatherEvolutions(speciesURL) {
         const species = await P.getResource(speciesURL);
         const evolutionURL = await P.getResource(species.evolution_chain.url);
-        if (!species || evolutionURL) throw new ReferenceError('<species> or <evolutionURL> has undefined value.');
+        if (!species || !evolutionURL) throw new ReferenceError('<species> or <evolutionURL> has undefined value.');
 
         // Access the evolutionary chain
         const evolutionChain = evolutionURL.chain;

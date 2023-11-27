@@ -15,11 +15,8 @@
                 <!-- Show the pokemon images and possibly evolutions sprites -->
                 <img src="<%= data.sprite %>" alt="An <%= data.name %> Sprite" class="rounded-circle border border-white" style="width: 150px; height: 150px; object-fit: cover; image-rendering: pixelated;">
                 <div>
-                    <% if (data.evolutions.length > 0) { %>
-                        <p>Pokemon evolution chain</p>
-                        <% data.evolutions.forEach(evolution => { %>
-                            <img src="<%= evolution.sprite %>" alt="An <%= evolution.name %> Sprite" class="rounded-circle border border-white" style="width: 150px; height: 150px; object-fit: cover; image-rendering: pixelated;">     
-                        <% }) %>
+                    <% for (let i = 0; i < data.evolutionChain.evolves_to.length; i++) { %>
+                        <img src="<%# data.evolutionChain.evolves_to[i].sprite %>" alt="An <%= data.evolutionChain.evolves_to[i].name %> Sprite" class="rounded-circle border border-white" style="width: 75px; height: 75px; object-fit: cover; image-rendering: pixelated;">  
                     <% } %>
                 </div>
             </div>
