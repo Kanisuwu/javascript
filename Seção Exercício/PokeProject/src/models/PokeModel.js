@@ -91,9 +91,6 @@ export default class Pokemon {
         pokemon.types.forEach((obj) => {
             types.push(Pokemon.capitalize(obj.type.name));
         });
-        /**
-         * @typedef {Array} types
-         */
         return types;
     }
 
@@ -102,11 +99,6 @@ export default class Pokemon {
         pokemon.stats.forEach((obj) => {
             stats.push({ base_stat: obj.base_stat, name: Pokemon.capitalize(obj.stat.name) });
         });
-        /**
-         * @typedef {Object[]} stats
-         * @property {number} base_stat
-         * @property {string} name
-         */
         return stats;
     }
 
@@ -115,10 +107,22 @@ export default class Pokemon {
         const chainedEvolution = [];
         let i = 0;
 
+        /**
+         * @typedef {Object[]} chainedEvolution
+         * @property {string} name
+         * @property {string} url
+         * @property {Object} evolves_to
+         */
         for (const obj of chain.evolves_to) {
             chainedEvolution.push({
                 name: obj.species.name,
                 url: obj.species.url,
+                /**
+                 * @memberof chainedEvolution
+                 * @type {Object}
+                 * @property {string} name
+                 * @property {string} url
+                 */
                 evolves_to: {
                     name: obj.evolves_to[i] ? obj.evolves_to[i].species.name : '',
                     url: obj.evolves_to[i] ? obj.evolves_to[i].species.url : '',
