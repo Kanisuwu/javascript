@@ -16,7 +16,7 @@ export default class Pokemon {
     constructor(body) {
         this.body = body;
         this.errors = [];
-        this.pokemon = null;
+        this.info = null;
     }
 
     /*
@@ -38,7 +38,8 @@ export default class Pokemon {
             return pokemon;
         }
         catch (e) {
-            console.log(e);
+            console.error('Error while searching for pokemon:', e);
+            return false;
         }
     }
     // Gather data about the pokemon.
@@ -48,32 +49,57 @@ export default class Pokemon {
             const pokemon = await this.searchPokemon();
             if (!pokemon) return;
 
-            const statsCleaned = [];
-            const typesCleaned = [];
-            const evolutionChain = await this.gatherEvolutions(pokemon.species.url);
+            const stats = this.getStats(pokemon);
+            const types = this.getTypes(pokemon);
+            let evolutionChain;
 
-            pokemon.stats.forEach((obj) => {
-                statsCleaned.push({ base_stat: obj.base_stat, name: Pokemon.capitalize(obj.stat.name) });
-            });
+            try {
+                evolutionChain = await this.gatherEvolutions(pokemon.species.url);
+            } catch (e) {
+                console.error('Error while gathering evolutions:', e);
+                // Handle the error here, such as setting a default value for evolutionChain
+                evolutionChain = [];
+            }
 
-            pokemon.types.forEach((obj) => {
-                typesCleaned.push(Pokemon.capitalize(obj.type.name));
-            });
-
+            /**
+             * Represents the data for a Pokemon.
+             * @typedef {Object} PokeData
+             * @property {string} name - The capitalized name of the Pokemon.
+             * @property {string[]} types - The types of the Pokemon.
+             * @property {string} sprite - The URL of the Pokemon's sprite image.
+             * @property {Object} stats - The stats of the Pokemon.
+             * @property {Array} evolutionChain - The evolution chain of the Pokemon.
+             */
             const pokeData = {
                 name: Pokemon.capitalize(pokemon.name),
-                types: typesCleaned,
+                types: types,
                 sprite: pokemon.sprites.front_default,
-                stats: statsCleaned,
-                // evolutionChain.evolves_to | And it's an array.
+                stats: stats,
                 evolutionChain: evolutionChain,
             };
-            console.log(pokeData.evolutionChain.evolves_to);
-            return pokeData;
+            console.log(pokeData.evolutionChain);
+            this.info = pokeData;
         }
         catch (e) {
-            console.log('ERR >>> ' + e);
+            console.error('Could not gather data.');
+            this.errors.push('Pokemon cannot be gathered.');
         }
+    }
+
+    getTypes(pokemon) {
+        const types = [];
+        pokemon.types.forEach((obj) => {
+            types.push(Pokemon.capitalize(obj.type.name));
+        });
+        return types;
+    }
+
+    getStats(pokemon) {
+        const stats = [];
+        pokemon.stats.forEach((obj) => {
+            stats.push({ base_stat: obj.base_stat, name: Pokemon.capitalize(obj.stat.name) });
+        });
+        return stats;
     }
 
     // Get nested data. Communicates with gatherEvolutions()
@@ -105,6 +131,13 @@ export default class Pokemon {
         // Access the evolutionary chain
         const evolutionChain = evolutionURL.chain;
 
+        /**
+         * chainObj structure:
+         * @typedef {Object} chainObj
+         * @property {Object[]} evolves_to
+         * @property {string} from
+         * @property {string} url
+         */
         const chainObj = {
             evolves_to: this.getEvolutionChain(evolutionChain),
             from: evolutionChain.species.name,
