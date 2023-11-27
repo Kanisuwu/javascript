@@ -67,8 +67,8 @@ export default class Pokemon {
              * @property {string} name - The capitalized name of the Pokemon.
              * @property {string[]} types - The types of the Pokemon.
              * @property {string} sprite - The URL of the Pokemon's sprite image.
-             * @property {Object} stats - The stats of the Pokemon.
-             * @property {Array} evolutionChain - The evolution chain of the Pokemon.
+             * @property {Object[]} stats - The stats of the Pokemon.
+             * @property {Object[]} evolutionChain - The evolution chain of the Pokemon.
              */
             const pokeData = {
                 name: Pokemon.capitalize(pokemon.name),
@@ -91,6 +91,9 @@ export default class Pokemon {
         pokemon.types.forEach((obj) => {
             types.push(Pokemon.capitalize(obj.type.name));
         });
+        /**
+         * @typedef {Array} types
+         */
         return types;
     }
 
@@ -99,6 +102,11 @@ export default class Pokemon {
         pokemon.stats.forEach((obj) => {
             stats.push({ base_stat: obj.base_stat, name: Pokemon.capitalize(obj.stat.name) });
         });
+        /**
+         * @typedef {Object[]} stats
+         * @property {number} base_stat
+         * @property {string} name
+         */
         return stats;
     }
 
