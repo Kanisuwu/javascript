@@ -47,19 +47,11 @@ export default class Pokemon {
         try {
             if (this.errors.length > 0) return;
             const pokemon = await this.searchPokemon();
-            if (!pokemon) return;
+            if (!pokemon) throw new ReferenceError('<pokemon> has undefined value.');
 
             const stats = this.getStats(pokemon);
             const types = this.getTypes(pokemon);
-            let evolutionChain;
-
-            try {
-                evolutionChain = await this.gatherEvolutions(pokemon.species.url);
-            } catch (e) {
-                console.error('Error while gathering evolutions:', e);
-                // Handle the error here, such as setting a default value for evolutionChain
-                evolutionChain = [];
-            }
+            const evolutionChain = await this.gatherEvolutions(pokemon.species.url);
 
             /**
              * Represents the data for a Pokemon.
@@ -137,9 +129,9 @@ export default class Pokemon {
     // Gather general info of evolution
     async gatherEvolutions(speciesURL) {
         const species = await P.getResource(speciesURL);
-        if (!species) return;
-
         const evolutionURL = await P.getResource(species.evolution_chain.url);
+        if (!species || evolutionURL) throw new ReferenceError('<species> or <evolutionURL> has undefined value.');
+
         // Access the evolutionary chain
         const evolutionChain = evolutionURL.chain;
 
