@@ -60,14 +60,14 @@ export default class Pokemon {
              * @property {string[]} types - The types of the Pokemon.
              * @property {string} sprite - The URL of the Pokemon's sprite image.
              * @property {Object[]} stats - The stats of the Pokemon.
-             * @property {Object[]} evolutionChain - The evolution chain of the Pokemon.
+             * @property {Object[]} chainData - The evolution chain of the Pokemon.
              */
             const pokeData = {
                 name: Pokemon.capitalize(pokemon.name),
                 types: types,
                 sprite: pokemon.sprites.front_default,
                 stats: stats,
-                evolutionChain: evolutionChain,
+                chainData: this.evolutionData(evolutionChain),
             };
             this.info = pokeData;
         }
@@ -107,16 +107,13 @@ export default class Pokemon {
         for (const obj of chain.evolves_to) {
             chainedEvolution.push({
                 name: obj.species.name,
-                url: obj.species.url,
                 /**
                  * @memberof chainedEvolution
                  * @type {Object}
                  * @property {string} name
-                 * @property {string} url
                  */
                 evolves_to: {
                     name: obj.evolves_to[i] ? obj.evolves_to[i].species.name : '',
-                    url: obj.evolves_to[i] ? obj.evolves_to[i].species.url : '',
                 },
             });
             i++;
@@ -139,14 +136,33 @@ export default class Pokemon {
          * @typedef {Object} chainObj
          * @property {Object[]} evolves_to
          * @property {string} from
-         * @property {string} url
          */
         const chainObj = {
             evolves_to: this.getEvolutionChain(evolutionChain),
-            from: evolutionChain.species.name,
-            url: evolutionChain.species.url,
         };
         return chainObj;
+    }
+
+    async evolutionData(evolChainObj) {
+        try {
+            const chainData = [{
+                from: evolChainObj.from,
+            }];
+            for (const key in evolChainObj.evolves_to) {
+                const pokemonName = new Pokemon({ name: evolChainObj.evolves_to[key].name });
+                const pokemon = await pokemonName.searchPokemon();
+                if (!pokemon) throw new Error('<pokemon> has undefined value.');
+                chainData.push({
+                    name: Pokemon.capitalize(pokemon.name),
+                    data: pokemon.sprites.front_default,
+                });
+            }
+            return chainData;
+        }
+        catch (e) {
+            console.error('Cannot gather evolution data: ', e);
+            return;
+        }
     }
     /**
      *
