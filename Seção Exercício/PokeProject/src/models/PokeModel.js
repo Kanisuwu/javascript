@@ -1,4 +1,5 @@
 // import mongoose from "mongoose";
+import { species } from "core-js/fn/symbol";
 import Pokedex from "pokedex-promise-v2";
 
 const P = new Pokedex();
@@ -21,7 +22,7 @@ export default class Pokemon {
 
     /*
      *
-     * -------- METHODS --------
+     * -------- ASYNC METHODS --------
      *
      */
 
@@ -35,7 +36,7 @@ export default class Pokemon {
                 this.errors.push('Pokemon does not exist.');
                 return;
             }
-            return pokemon;
+            return pokemon.species.url;
         }
         catch (e) {
             console.error('Error while searching for pokemon:', e);
@@ -46,12 +47,13 @@ export default class Pokemon {
     async gatherData() {
         try {
             if (this.errors.length > 0) return;
-            const pokemon = await this.searchPokemon();
-            if (!pokemon) throw new ReferenceError('<pokemon> has undefined value.');
+            const url = await this.searchPokemon();
+            const speciesData = await this.getSpeciesUrl(url);
+            const pokemon = P.getResource(speciesData.pokemon_url)
+            const evolutionChain = await this.gatherEvolutions(speciesData);            
 
             const stats = this.getStats(pokemon);
             const types = this.getTypes(pokemon);
-            const evolutionChain = await this.gatherEvolutions(pokemon.species.url);
 
             /**
              * Represents the data for a Pokemon.
@@ -77,6 +79,100 @@ export default class Pokemon {
         }
     }
 
+    async getSpeciesUrl(url) {
+        try {
+            const speciesData = [];
+            let defaultPokemon;
+            const species = await P.getResource(url);
+
+            // Validates species
+            if (!species) throw new ReferenceError('<species-data> is falsy.');
+
+            // Validates the default pokemon
+            for (const index in species.varities) {
+                if (species.varities[index].is_default) return defaultPokemon = species.varities[index].pokemon.url;
+            }
+
+            speciesData.forEach({
+                evolution_chain_url: species.evolution_chain.url,
+                evolves_from: species.evolves_from_species,
+                pokemon_url: defaultPokemon || species.varities[0].pokemon.url,
+            });
+
+            return speciesData;
+        }
+        catch (e) {
+            console.error('Could not get species data: ', e)
+            this.errors.push('Species Data not Found.')
+        }
+    }
+
+    // Get nested data. Communicates with gatherEvolutions()
+    async getEvolutionChain(url) {
+        const chainedEvolution = [];
+        const deeperData = [];
+        const chainUrl = await P.getResource(url);
+        const chainData = chainUrl.chain;
+
+        for (const obj in chainData.evolves_to.evolves_to) {
+            deeperData.push({
+                name: obj.species.name,
+                speciesUrl: obj.species.url
+            })
+        }
+
+        for (const obj of chainData.evolves_to) {
+            /**
+             * @typedef {Object[]} chainedEvolution
+             * @property {string} name
+             * @property {string} url
+             * @property {Object} evolves_to
+             */
+            chainedEvolution.push({
+                name: obj.species.name,
+                speciesUrl: obj.species.url,
+                evolves_to: deeperData
+            });
+        }
+
+        return chainedEvolution;
+    }
+
+    // Gather general info of evolution
+    async gatherEvolutions(speciesDataObj) {
+        const evolutionChain = await P.getResource(speciesDataObj.evolution_chain_url);
+        if (!evolutionChain) throw new ReferenceError('<evolutionChain> has undefined value.');
+
+        const fromName = speciesDataObj.evolves_from_species.name
+        const fromUrl = speciesDataObj.evolves_from_species.url
+        let fromObj = {
+            name: fromName,
+            url: fromUrl,
+        }
+
+        if (!fromName && !fromUrl) return from = null;
+
+        /**
+         * chainObj structure:
+         * @typedef {Object} chainObj
+         * @property {Object[]} evolves_to
+         * @property {string} from
+         * @property {string} url
+         */
+
+        const chainObj = {
+            evolves_to: await this.getEvolutionChain(evolutionChain),
+            from: fromObj
+        };
+        return chainObj;
+    }
+
+    /*
+     *
+     * -------- METHODS --------
+     *
+     */
+
     getTypes(pokemon) {
         const types = [];
         pokemon.types.forEach((obj) => {
@@ -92,62 +188,8 @@ export default class Pokemon {
         });
         return stats;
     }
+    
 
-    // Get nested data. Communicates with gatherEvolutions()
-    getEvolutionChain(chain) {
-        const chainedEvolution = [];
-        let i = 0;
-
-        /**
-         * @typedef {Object[]} chainedEvolution
-         * @property {string} name
-         * @property {string} url
-         * @property {Object} evolves_to
-         */
-        for (const obj of chain.evolves_to) {
-            chainedEvolution.push({
-                name: obj.species.name,
-                url: obj.species.url,
-                /**
-                 * @memberof chainedEvolution
-                 * @type {Object}
-                 * @property {string} name
-                 * @property {string} url
-                 */
-                evolves_to: {
-                    name: obj.evolves_to[i] ? obj.evolves_to[i].species.name : '',
-                    url: obj.evolves_to[i] ? obj.evolves_to[i].species.url : '',
-                },
-            });
-            i++;
-        }
-
-        return chainedEvolution;
-    }
-
-    // Gather general info of evolution
-    async gatherEvolutions(speciesURL) {
-        const species = await P.getResource(speciesURL);
-        const evolutionURL = await P.getResource(species.evolution_chain.url);
-        if (!species || !evolutionURL) throw new ReferenceError('<species> or <evolutionURL> has undefined value.');
-
-        // Access the evolutionary chain
-        const evolutionChain = evolutionURL.chain;
-
-        /**
-         * chainObj structure:
-         * @typedef {Object} chainObj
-         * @property {Object[]} evolves_to
-         * @property {string} from
-         * @property {string} url
-         */
-        const chainObj = {
-            evolves_to: this.getEvolutionChain(evolutionChain),
-            from: evolutionChain.species.name,
-            url: evolutionChain.species.url,
-        };
-        return chainObj;
-    }
     /**
      *
      *
