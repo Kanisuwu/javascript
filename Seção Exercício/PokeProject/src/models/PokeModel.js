@@ -1,5 +1,4 @@
 // import mongoose from "mongoose";
-import { species } from "core-js/fn/symbol";
 import Pokedex from "pokedex-promise-v2";
 
 const P = new Pokedex();
@@ -49,8 +48,8 @@ export default class Pokemon {
             if (this.errors.length > 0) return;
             const url = await this.searchPokemonSpecies();
             const speciesData = await this.getSpeciesUrl(url);
-            const pokemon = P.getResource(speciesData.pokemon_url)
-            const evolutionChain = await this.gatherEvolutions(speciesData);            
+            const pokemon = P.getResource(speciesData.pokemon_url);
+            const evolutionChain = await this.gatherEvolutions(speciesData);
 
             const stats = this.getStats(pokemon);
             const types = this.getTypes(pokemon);
@@ -102,8 +101,8 @@ export default class Pokemon {
             return speciesData;
         }
         catch (e) {
-            console.error('Could not get species data: ', e)
-            this.errors.push('Species Data not Found.')
+            console.error('Could not get species data: ', e);
+            this.errors.push('Species Data not Found.');
         }
     }
 
@@ -117,8 +116,8 @@ export default class Pokemon {
         for (const obj in chainData.evolves_to.evolves_to) {
             deeperData.push({
                 name: obj.species.name,
-                speciesUrl: obj.species.url
-            })
+                speciesUrl: obj.species.url,
+            });
         }
 
         for (const obj of chainData.evolves_to) {
@@ -131,7 +130,7 @@ export default class Pokemon {
             chainedEvolution.push({
                 name: obj.species.name,
                 speciesUrl: obj.species.url,
-                evolves_to: deeperData
+                evolves_to: deeperData,
             });
         }
 
@@ -143,14 +142,14 @@ export default class Pokemon {
         const evolutionChain = await P.getResource(speciesDataObj.evolution_chain_url);
         if (!evolutionChain) throw new ReferenceError('<evolutionChain> has undefined value.');
 
-        const fromName = speciesDataObj.evolves_from_species.name
-        const fromUrl = speciesDataObj.evolves_from_species.url
+        const fromName = speciesDataObj.evolves_from_species.name;
+        const fromUrl = speciesDataObj.evolves_from_species.url;
         let fromObj = {
             name: fromName,
             url: fromUrl,
-        }
+        };
 
-        if (!fromName && !fromUrl) return from = null;
+        if (!fromName && !fromUrl) return fromObj = null;
 
         /**
          * chainObj structure:
@@ -162,7 +161,7 @@ export default class Pokemon {
 
         const chainObj = {
             evolves_to: await this.getEvolutionChain(evolutionChain),
-            from: fromObj
+            from: fromObj,
         };
         return chainObj;
     }
@@ -188,7 +187,7 @@ export default class Pokemon {
         });
         return stats;
     }
-    
+
 
     /**
      *
