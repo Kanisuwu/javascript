@@ -27,7 +27,7 @@ export default class Pokemon {
      */
 
     // Try to contact the pokeAPI and check if was successful.
-    async searchPokemon() {
+    async searchPokemonSpecies() {
         if (!this.body.name) return;
         try {
             const pokemonName = Pokemon.stringCleanUp(this.body.name);
@@ -47,7 +47,7 @@ export default class Pokemon {
     async gatherData() {
         try {
             if (this.errors.length > 0) return;
-            const url = await this.searchPokemon();
+            const url = await this.searchPokemonSpecies();
             const speciesData = await this.getSpeciesUrl(url);
             const pokemon = P.getResource(speciesData.pokemon_url)
             const evolutionChain = await this.gatherEvolutions(speciesData);            
