@@ -15,8 +15,10 @@
                 <!-- Show the pokemon images and possibly evolutions sprites -->
                 <img src="<%= data.sprite %>" alt="An <%= data.name %> Sprite" class="rounded-circle border border-white" style="width: 150px; height: 150px; object-fit: cover; image-rendering: pixelated;">
                 <div class="d-flex flex-column">
-                    <% for (let i = 0; i < data.evolutionChain.evolves_to.length; i++) { %>
-                        <img src="<%= data.possibleEvolutions[i].sprite %>" alt="An <%= data.possibleEvolutions[i].name %> Sprite" class="rounded-circle border border-white" style="width: 75px; height: 75px; object-fit: cover; image-rendering: pixelated;">  
+                    <% if (data.chainData.evolves_to.length > 0) { %>
+                        <% for (let i = 0; i < data.chainData.evolves_to.length; i++) { %>
+                            <img src="<%= data.chainData.evolves_to[i].sprite %>" alt="An <%= data.chainData.evolves_to[i].name %> Sprite" class="rounded-circle border border-white" style="width: 75px; height: 75px; object-fit: cover; image-rendering: pixelated;">  
+                        <% } %>
                     <% } %>
                 </div>
             </div>
